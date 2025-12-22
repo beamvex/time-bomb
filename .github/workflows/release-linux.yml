@@ -1,0 +1,57 @@
+name: Release Linux Tarball
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build linux tarball
+        run: npm run dist:linux
+
+      - name: Prepare release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          shopt -s nullglob
+          tarballs=(release/*.tar.gz)
+          if [ ${#tarballs[@]} -eq 0 ]; then
+            echo "No tar.gz found in release/."
+            echo "Contents of release/:"
+            ls -la release || true
+            exit 1
+          fi
+
+          src_tarball="${tarballs[0]}"
+          out_tarball="time-bomb-${GITHUB_REF_NAME}-linux-x86_64.tar.gz"
+
+          cp "$src_tarball" "$out_tarball"
+
+          sha256sum "$out_tarball" > "$out_tarball.sha256"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            time-bomb-${{ github.ref_name }}-linux-x86_64.tar.gz
+            time-bomb-${{ github.ref_name }}-linux-x86_64.tar.gz.sha256

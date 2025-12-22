@@ -9,7 +9,7 @@
     "build:watch": "node esbuild.config.js --watch",
     "dev": "npm run build:watch",
     "start": "electron dist/main.js",
-    "dist:linux": "npm run build && electron-builder --linux AppImage",
+    "dist:linux": "npm run build && electron-builder --linux tar.gz",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write src/**/*.ts",
@@ -52,7 +52,7 @@
     ],
     "linux": {
       "target": [
-        "AppImage"
+        "tar.gz"
       ],
       "category": "Utility"
     }
