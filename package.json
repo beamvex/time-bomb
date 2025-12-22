@@ -1,5 +1,5 @@
 {
-  "name": "../time-bomb",
+  "name": "time-bomb",
   "version": "1.0.0",
   "description": "TypeScript Hello World",
   "main": "dist/main.js",
@@ -9,6 +9,7 @@
     "build:watch": "node esbuild.config.js --watch",
     "dev": "npm run build:watch",
     "start": "electron dist/main.js",
+    "dist:linux": "npm run build && electron-builder --linux AppImage",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write src/**/*.ts",
@@ -31,11 +32,29 @@
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
     "electron": "^37.4.0",
+    "electron-builder": "^26.0.12",
     "esbuild": "^0.25.9",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.6.2",
     "typescript": "^5.9.2"
+  },
+  "build": {
+    "appId": "com.timebomb.app",
+    "productName": "Time Bomb",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Utility"
+    }
   }
 }
