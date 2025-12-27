@@ -14,8 +14,18 @@ const setText = (id: string, text: string): void => {
   if (el) el.textContent = text;
 };
 
-const setTitle = (remainingSeconds: number): void => {
-  document.title = `Time Bomb — ${formatHms(remainingSeconds)}`;
+let flashIntervalId: ReturnType<typeof globalThis.setInterval> | null = null;
+let flashOn = false;
+
+const getBaseTitle = (remainingSeconds: number): string =>
+  `💣 Time Bomb — ${formatHms(remainingSeconds)}`;
+const getFlashTitle = (remainingSeconds: number): string =>
+  `💣 !!! TIME BOMB !!! — ${formatHms(remainingSeconds)}`;
+
+const updateTitle = (remainingSeconds: number): void => {
+  document.title = flashOn
+    ? getFlashTitle(remainingSeconds)
+    : getBaseTitle(remainingSeconds);
 };
 
 const formatHms = (totalSeconds: number): string => {
@@ -31,7 +41,7 @@ const formatHms = (totalSeconds: number): string => {
 let remaining = getSecondsFromQuery();
 const initialRemaining = remaining;
 setText('count', formatHms(remaining));
-setTitle(remaining);
+updateTitle(remaining);
 
 let intervalId: ReturnType<typeof globalThis.setInterval> | null = null;
 let paused = false;
@@ -44,22 +54,58 @@ const setToggleText = (): void => {
 const tick = (): void => {
   remaining -= 1;
   setText('count', formatHms(remaining));
-  setTitle(remaining);
+  updateTitle(remaining);
 
   if (remaining <= 0) {
+    if (flashIntervalId !== null) {
+      globalThis.clearInterval(flashIntervalId);
+      flashIntervalId = null;
+      flashOn = false;
+    }
     window.timebomb.quit();
   }
+};
+
+const addSeconds = (seconds: number): void => {
+  remaining += seconds;
+  setText('count', formatHms(remaining));
+  updateTitle(remaining);
+  syncFlashing();
+};
+
+const syncFlashing = (): void => {
+  const shouldFlash = !paused && remaining > 0 && remaining < 60;
+
+  if (!shouldFlash) {
+    if (flashIntervalId !== null) {
+      globalThis.clearInterval(flashIntervalId);
+      flashIntervalId = null;
+    }
+    flashOn = false;
+    updateTitle(remaining);
+    return;
+  }
+
+  if (flashIntervalId !== null) return;
+
+  flashOn = false;
+  flashIntervalId = globalThis.setInterval(() => {
+    flashOn = !flashOn;
+    updateTitle(remaining);
+  }, 1000);
 };
 
 const startTimer = (): void => {
   if (intervalId !== null) return;
   intervalId = globalThis.setInterval(tick, 1000);
+  syncFlashing();
 };
 
 const stopTimer = (): void => {
   if (intervalId === null) return;
   globalThis.clearInterval(intervalId);
   intervalId = null;
+  syncFlashing();
 };
 
 const togglePause = (): void => {
@@ -72,7 +118,8 @@ const togglePause = (): void => {
 const resetTimer = (): void => {
   remaining = initialRemaining;
   setText('count', formatHms(remaining));
-  setTitle(remaining);
+  updateTitle(remaining);
+  syncFlashing();
 
   if (!paused && intervalId === null) {
     startTimer();
@@ -86,6 +133,18 @@ const wireControls = (): void => {
 
   const reset = document.getElementById('reset');
   if (reset) reset.addEventListener('click', resetTimer);
+
+  const add1 = document.getElementById('add1');
+  if (add1) add1.addEventListener('click', () => addSeconds(60));
+
+  const add5 = document.getElementById('add5');
+  if (add5) add5.addEventListener('click', () => addSeconds(5 * 60));
+
+  const add10 = document.getElementById('add10');
+  if (add10) add10.addEventListener('click', () => addSeconds(10 * 60));
+
+  const add20 = document.getElementById('add20');
+  if (add20) add20.addEventListener('click', () => addSeconds(20 * 60));
 
   setToggleText();
 };
