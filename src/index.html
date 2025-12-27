@@ -57,8 +57,16 @@
       .controls {
         margin-top: 16px;
         display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .controls-row {
+        display: flex;
         justify-content: center;
         gap: 10px;
+        flex-wrap: wrap;
       }
 
       .btn {
@@ -90,12 +98,16 @@
         <div class="label">Time remaining</div>
         <div id="count" class="count">--</div>
         <div class="controls">
-          <button id="toggle" class="btn" type="button">Defuse</button>
-          <button id="reset" class="btn" type="button">Reset</button>
-          <button id="add1" class="btn" type="button">+1m</button>
-          <button id="add5" class="btn" type="button">+5m</button>
-          <button id="add10" class="btn" type="button">+10m</button>
-          <button id="add20" class="btn" type="button">+20m</button>
+          <div class="controls-row">
+            <button id="toggle" class="btn" type="button">Defuse</button>
+            <button id="reset" class="btn" type="button">Reset</button>
+          </div>
+          <div class="controls-row">
+            <button id="add1" class="btn" type="button">+1m</button>
+            <button id="add5" class="btn" type="button">+5m</button>
+            <button id="add10" class="btn" type="button">+10m</button>
+            <button id="add20" class="btn" type="button">+20m</button>
+          </div>
         </div>
         <div class="hint">This window will close when it reaches 0.</div>
       </div>
