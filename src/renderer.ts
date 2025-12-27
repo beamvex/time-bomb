@@ -29,8 +29,17 @@ const formatHms = (totalSeconds: number): string => {
 };
 
 let remaining = getSecondsFromQuery();
+const initialRemaining = remaining;
 setText('count', formatHms(remaining));
 setTitle(remaining);
+
+let intervalId: ReturnType<typeof globalThis.setInterval> | null = null;
+let paused = false;
+
+const setToggleText = (): void => {
+  const el = document.getElementById('toggle');
+  if (el) el.textContent = paused ? 'Re-fuse' : 'Defuse';
+};
 
 const tick = (): void => {
   remaining -= 1;
@@ -42,4 +51,44 @@ const tick = (): void => {
   }
 };
 
-setInterval(tick, 1000);
+const startTimer = (): void => {
+  if (intervalId !== null) return;
+  intervalId = globalThis.setInterval(tick, 1000);
+};
+
+const stopTimer = (): void => {
+  if (intervalId === null) return;
+  globalThis.clearInterval(intervalId);
+  intervalId = null;
+};
+
+const togglePause = (): void => {
+  paused = !paused;
+  if (paused) stopTimer();
+  else startTimer();
+  setToggleText();
+};
+
+const resetTimer = (): void => {
+  remaining = initialRemaining;
+  setText('count', formatHms(remaining));
+  setTitle(remaining);
+
+  if (!paused && intervalId === null) {
+    startTimer();
+  }
+};
+
+const wireControls = (): void => {
+  const btn = document.getElementById('toggle');
+  if (!btn) return;
+  btn.addEventListener('click', togglePause);
+
+  const reset = document.getElementById('reset');
+  if (reset) reset.addEventListener('click', resetTimer);
+
+  setToggleText();
+};
+
+wireControls();
+startTimer();

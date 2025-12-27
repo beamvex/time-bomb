@@ -1,7 +1,8 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import path from 'node:path';
 
 let mainWindow: BrowserWindow | null = null;
+let isQuitting = false;
 
 const DEFAULT_SECONDS = 10;
 
@@ -27,7 +28,7 @@ const getSeconds = (): number => {
   return DEFAULT_SECONDS;
 };
 
-const createWindow = () => {
+const createWindow = (): void => {
   const seconds = getSeconds();
 
   mainWindow = new BrowserWindow({
@@ -37,6 +38,27 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
+  });
+
+  mainWindow.on('close', async event => {
+    if (isQuitting) return;
+
+    event.preventDefault();
+
+    const result = await dialog.showMessageBox(mainWindow!, {
+      type: 'question',
+      message: 'Close Time Bomb?',
+      detail: 'Closing will stop the timer.',
+      buttons: ['Cancel', 'Close'],
+      defaultId: 0,
+      cancelId: 0,
+      noLink: true,
+    });
+
+    if (result.response === 1) {
+      isQuitting = true;
+      mainWindow?.close();
+    }
   });
 
   mainWindow.setMenuBarVisibility(false);
@@ -58,6 +80,7 @@ app.whenReady().then(() => {
 });
 
 ipcMain.on('timebomb:quit', () => {
+  isQuitting = true;
   app.quit();
 });
 

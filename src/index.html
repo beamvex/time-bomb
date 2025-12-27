@@ -53,6 +53,35 @@
         font-size: 12px;
         opacity: 0.65;
       }
+
+      .controls {
+        margin-top: 16px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+        color: #e9ecf1;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-family: inherit;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.09);
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
     </style>
   </head>
   <body>
@@ -60,6 +89,10 @@
       <div class="card">
         <div class="label">Time remaining</div>
         <div id="count" class="count">--</div>
+        <div class="controls">
+          <button id="toggle" class="btn" type="button">Defuse</button>
+          <button id="reset" class="btn" type="button">Reset</button>
+        </div>
         <div class="hint">This window will close when it reaches 0.</div>
       </div>
     </div>
