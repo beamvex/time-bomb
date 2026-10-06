@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Time Bomb
+Exec=AppRun --no-sandbox %U
+Terminal=false
+Type=Application
+Icon=time-bomb
+StartupWMClass=Time Bomb
+X-AppImage-Version=1.0.0
+Comment=TypeScript Hello World
+Categories=Utility;

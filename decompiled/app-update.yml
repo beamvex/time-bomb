@@ -1,0 +1,4 @@
+owner: beamvex
+repo: time-bomb
+provider: github
+updaterCacheDirName: time-bomb-updater

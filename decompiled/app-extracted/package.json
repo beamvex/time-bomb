@@ -1,0 +1,9 @@
+{
+  "name": "time-bomb",
+  "version": "1.0.0",
+  "description": "TypeScript Hello World",
+  "main": "dist/main.js",
+  "type": "commonjs",
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/preload.ts"],
+  "sourcesContent": ["import { contextBridge, ipcRenderer } from 'electron';\n\ncontextBridge.exposeInMainWorld('timebomb', {\n  quit: () => ipcRenderer.send('timebomb:quit'),\n});\n\ndeclare global {\n  interface Window {\n    timebomb: {\n      quit: () => void;\n    };\n  }\n}\n"],
+  "mappings": ";;;AAAA,sBAA2C;AAE3C,8BAAc,kBAAkB,YAAY;AAAA,EAC1C,MAAM,MAAM,4BAAY,KAAK,eAAe;AAC9C,CAAC;",
+  "names": []
+}
